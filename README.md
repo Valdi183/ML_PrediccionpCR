@@ -94,6 +94,15 @@ sí necesitan el dataset).
 
 ---
 
+## Pesos
+
+Los 5 pesos del modelo final y el ONNX de la web también están en Hugging Face, con su
+tarjeta del modelo: <https://huggingface.co/Valdi183/ML_PrediccionpCR>. Los pesos siguen en
+`models/`, y la fuente de verdad es [`results/test/plan.json`](results/test/plan.json), con
+el SHA-256 de cada uno: una copia es válida solo si su SHA-256 coincide con el del plan.
+
+---
+
 ## Reproducir
 
 ### 1. Entrenar los 5 modelos
