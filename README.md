@@ -28,11 +28,6 @@ test) usa un modelo preentrenado, así que es una cota superior y no es comparab
 decidido y por qué: [`docs/decisiones.md`](docs/decisiones.md); todo lo probado:
 [`docs/iteraciones.md`](docs/iteraciones.md).
 
-El historial de desarrollo (todos los commits, la primera versión de la app y los
-lanzadores del laboratorio) está en el repositorio anterior,
-[`Valdi183/ML_Caso_1_Cancer`](https://github.com/Valdi183/ML_Caso_1_Cancer). Este es el
-repositorio de entrega.
-
 ---
 
 ## Reglas del caso
@@ -94,7 +89,8 @@ entrenamiento, validacion = uc.particion(uc.cargar_samples(), fold_val=0)
 ```
 
 Sin el dataset funcionan la web, `python -m src.inferencia`, las pruebas (las que lo
-necesitan se saltan) y todo lo que solo lee `results/`.
+necesitan se saltan) y todo lo que solo lee `results/` (el umbral y la evaluación de test
+sí necesitan el dataset).
 
 ---
 
@@ -104,7 +100,7 @@ necesitan se saltan) y todo lo que solo lee `results/`.
 
 Configuración congelada (de `experimentos/it6.txt` y `experimentos/it8.txt`): 3 bloques
 8-16-32, resumen por media, imagen a 128 px dentro de la red, pérdida normal, semilla 42 y el
-resto de `config.DEFECTO`.
+resto de `config.DEFECTO`. Las órdenes son de bash (en Windows, Git Bash).
 
 ```bash
 O="--aumentado --dropout 0.7 --wd 1e-3 --reducir 2 --filtros 8,16,32"
