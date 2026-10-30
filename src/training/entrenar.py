@@ -3,10 +3,10 @@
 
 Se lanza como modulo desde la raiz del repositorio:
 
-    # Prueba rapida en el portatil (CPU): pocas pacientes, 2 epocas, minutos
+    # Prueba rapida (CPU): pocas pacientes, 2 epocas, minutos
     python -m src.training.entrenar --rapido
 
-    # Entrenamiento real en el laboratorio (GPU)
+    # Entrenamiento real (GPU)
     python -m src.training.entrenar                          # base, perdida normal
     python -m src.training.entrenar --ponderada              # base, perdida ponderada
     python -m src.training.entrenar --ponderada --aumentado --realce

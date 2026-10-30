@@ -52,13 +52,13 @@ AUXILIARES = [
 ]
 
 
-def bajar(sesion: requests.Session, ruta: str, destino: Path) -> tuple[str, bool, str]:
+def bajar(cliente: requests.Session, ruta: str, destino: Path) -> tuple[str, bool, str]:
     """Descarga un fichero si no existe ya. Devuelve (ruta, ok, mensaje)."""
     salida = destino / ruta
     if salida.exists() and salida.stat().st_size > 0:
         return ruta, True, "ya estaba"
     try:
-        r = sesion.get(f"{BASE}/{ruta}", timeout=60)
+        r = cliente.get(f"{BASE}/{ruta}", timeout=60)
         r.raise_for_status()
         salida.parent.mkdir(parents=True, exist_ok=True)
         salida.write_bytes(r.content)
@@ -72,11 +72,11 @@ def descargar_lote(rutas: list[str], destino: Path, hilos: int, etiqueta: str) -
     fallos: list[str] = []
     hechos = 0
     total = len(rutas)
-    with requests.Session() as sesion:
+    with requests.Session() as cliente:
         adaptador = requests.adapters.HTTPAdapter(pool_maxsize=hilos, max_retries=3)
-        sesion.mount("https://", adaptador)
+        cliente.mount("https://", adaptador)
         with ThreadPoolExecutor(max_workers=hilos) as pool:
-            futuros = [pool.submit(bajar, sesion, r, destino) for r in rutas]
+            futuros = [pool.submit(bajar, cliente, r, destino) for r in rutas]
             for fut in as_completed(futuros):
                 ruta, ok, msg = fut.result()
                 hechos += 1

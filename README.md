@@ -212,7 +212,7 @@ y pytest en cada push y pull request a `main`.
 ```
 ML_PrediccionpCR/
 ├── .github/workflows/     ← ci.yml (ruff + pytest) y pages.yml (publica web/)
-├── configurar.ps1         ← prepara una máquina Windows de cero
+├── configurar.ps1         ← prepara el entorno en Windows desde cero
 ├── data/                  ← sitio opcional para el dataset (no se versiona)
 ├── docs/                  ← decisiones.md, iteraciones.md, figuras/, data/referencias.json
 ├── experimentos/          ← argumentos de cada entrenamiento, por iteración

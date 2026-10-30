@@ -1,5 +1,5 @@
-# Normaliza finales de linea: el repo se usa en varias maquinas y sin esto
-# cada una reescribe ficheros enteros y el diff deja de ser legible.
+# Normaliza finales de linea: sin esto, Windows y Linux reescriben ficheros
+# enteros y el diff deja de ser legible.
 * text=auto eol=lf
 
 *.ps1   text eol=crlf

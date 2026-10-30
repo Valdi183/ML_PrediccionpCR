@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-Comprueba que esta maquina puede entrenar el caso BreastDCEDL.
+Comprueba que el entorno puede entrenar el caso BreastDCEDL.
 
-Lanzalo despues de configurar un equipo nuevo, o cuando algo deje de funcionar.
+Lanzalo despues de preparar el entorno, o cuando algo deje de funcionar.
 No modifica nada: solo mira y dice que falta.
 
     python -m src.utils.verificar_entorno      (desde la raiz del repo)
@@ -33,7 +33,7 @@ def comprobar(etiqueta: str, funcion):
 
 # --------------------------------------------------------------------------- #
 print("\n=== Entorno =================================================")
-print(f"       maquina: {platform.node()}  ({platform.system()} {platform.release()})")
+print(f"       sistema: {platform.system()} {platform.release()}")
 print(f"       python : {sys.version.split()[0]}  en  {sys.prefix}")
 
 if sys.version_info < (3, 10):

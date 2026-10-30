@@ -185,7 +185,7 @@ predicciones guardadas; no se vuelve a pasar ninguna imagen por la red.
 
 **Las cifras oficiales se calcularon con TF32.** Las probabilidades guardadas
 (`predicciones_val.csv` de cada ejecución, y con ellas el umbral 0,3635, y
-`results/test/predicciones_test*.csv`) salieron de la RTX 3060 Ti con lotes de 128. Con
+`results/test/predicciones_test*.csv`) salieron de una GPU NVIDIA con lotes de 128. Con
 ese tamaño de lote cuDNN usa TF32 en las convoluciones, que PyTorch activa por defecto
 (`torch.backends.cudnn.allow_tf32`). Los pesos no cambian; solo el redondeo al predecir.
 

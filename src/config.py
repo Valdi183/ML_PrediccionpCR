@@ -11,9 +11,8 @@ dice otra cosa. Son parte del experimento: van versionados en git, y
 Dataset
 -------
 El dataset NO vive en el repositorio: son 1,27 GB en 38.109 ficheros. Cada
-maquina lo guarda en un sitio distinto (el portatil en `C:\bdcedl`, el equipo
-del laboratorio donde haya disco rapido), asi que ningun script debe llevar una
-ruta fija dentro. Se resuelve en este orden:
+instalacion lo guarda donde quiera (por ejemplo `C:\bdcedl`, o donde haya disco
+rapido), asi que ningun script debe llevar una ruta fija dentro. Se resuelve en este orden:
 
     1. la variable de entorno  BDCEDL
     2. el fichero  .bdcedl_ruta  en la raiz del repo (lo escribe configurar.ps1)
@@ -75,7 +74,7 @@ def _candidatas() -> list[Path]:
     rutas += [
         REPO / "data" / "bdcedl",
         REPO / "data" / "breastdcedl",
-        REPO.parent / "bdcedl",                # junto al repo (laboratorio)
+        REPO.parent / "bdcedl",                # junto al repo
         REPO.parent / "breastdcedl",
         Path("C:/bdcedl"),
         Path("D:/bdcedl"),
@@ -90,7 +89,7 @@ def raiz_datos() -> Path:
     for candidata in _candidatas():
         try:
             resuelta = candidata.expanduser().resolve()
-        except OSError:                        # ruta invalida en esta maquina
+        except OSError:                        # ruta invalida en este sistema
             continue
         if _es_valida(resuelta):
             return resuelta

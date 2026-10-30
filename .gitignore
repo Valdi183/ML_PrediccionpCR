@@ -7,7 +7,7 @@ breastdcedl/
 bdcedl/
 datos/
 
-# Ruta del dataset: es propia de cada maquina
+# Ruta local del dataset: no se versiona
 .bdcedl_ruta
 
 # --- Entorno ---------------------------------------------------------------

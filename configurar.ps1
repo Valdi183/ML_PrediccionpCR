@@ -1,10 +1,10 @@
 <#
 .SYNOPSIS
-    Prepara el entorno del caso BreastDCEDL en una maquina nueva.
+    Prepara el entorno del caso BreastDCEDL desde cero.
 
 .DESCRIPTION
     Clonar el repositorio y ejecutar este script deja todo listo: entorno
-    virtual, dependencias, PyTorch con la rueda que corresponda a la maquina
+    virtual, dependencias, PyTorch con la rueda que corresponda
     (GPU o CPU), dataset descargado y verificacion final.
 
     Es idempotente: si algo ya esta hecho, lo detecta y sigue. Si se corta a
@@ -19,7 +19,7 @@
 
 .PARAMETER Torch
     Fuerza la rueda de PyTorch: cu128, cu126, cu118 o cpu.
-    Si no lo pasas, se detecta con nvidia-smi.
+    Si no lo pasas, se detecta a partir del driver de NVIDIA.
 
 .EXAMPLE
     .\configurar.ps1
@@ -46,7 +46,7 @@ function Bien([string]$texto)  { Write-Host "   OK  $texto" -ForegroundColor Gre
 function Aviso([string]$texto) { Write-Host "   !   $texto" -ForegroundColor Yellow }
 
 # Ejecuta un programa externo y ABORTA si falla. Sin esto, un pip install roto
-# pasa desapercibido y el fallo aparece mucho mas tarde, ya en el laboratorio.
+# pasa desapercibido y el fallo aparece mucho mas tarde, ya entrenando.
 function Ejecuta {
     param([string]$Exe, [string[]]$Argumentos, [string]$Tarea)
     & $Exe @Argumentos
@@ -169,7 +169,7 @@ if ($r.Codigo -eq 0) {
     if (-not $Torch) {
         if (-not (Get-Command nvidia-smi -ErrorAction SilentlyContinue)) {
             $Torch = "cpu"
-            Aviso "sin nvidia-smi: no hay GPU NVIDIA, instalo la rueda CPU"
+            Aviso "no hay GPU NVIDIA, instalo la rueda CPU"
         } else {
             $smi = Sondea "nvidia-smi" @()
             # Los drivers recientes escriben "CUDA UMD Version" en lugar de "CUDA Version"
@@ -183,7 +183,7 @@ if ($r.Codigo -eq 0) {
                 else                                     { $Torch = "cu118" }
             } else {
                 $Torch = "cu126"
-                Aviso "no pude leer la version de CUDA en nvidia-smi, pruebo con cu126"
+                Aviso "no pude leer la version de CUDA del driver, pruebo con cu126"
             }
         }
     }
@@ -205,8 +205,8 @@ if ($r.Codigo -eq 0) {
 
 $r = Sondea $pyVenv @("-c", "import torch; print(torch.cuda.get_device_name(0) if torch.cuda.is_available() else 'SIN GPU')")
 if ($r.Salida -eq "SIN GPU") {
-    Aviso "PyTorch no ve ninguna GPU. Si esta maquina tiene una NVIDIA, borra .venv"
-    Aviso "y relanza con -Torch cu128 / cu126 / cu118 segun el CUDA que diga nvidia-smi."
+    Aviso "PyTorch no ve ninguna GPU. Si hay una NVIDIA, borra .venv"
+    Aviso "y relanza con -Torch cu128 / cu126 / cu118 segun la version de CUDA del driver."
 } else {
     Bien "PyTorch usa la GPU: $($r.Salida)"
 }

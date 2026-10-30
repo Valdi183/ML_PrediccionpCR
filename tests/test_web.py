@@ -30,7 +30,7 @@ def conjunto():
 
 
 @pytest.fixture(scope="module")
-def sesion():
+def modelo_ort():
     return ort.InferenceSession(str(ONNX), providers=["CPUExecutionProvider"])
 
 
@@ -39,9 +39,9 @@ def meta():
     return json.loads((WEB / "modelo.json").read_text(encoding="utf-8"))
 
 
-def con_onnx(sesion, x: np.ndarray) -> tuple[float, np.ndarray]:
+def con_onnx(modelo_ort, x: np.ndarray) -> tuple[float, np.ndarray]:
     """x: (3, 256, 256) uint8 -> (media, por modelo) como lo hace el navegador (uint8 / 255 en float32)."""
-    prob, por_modelo = sesion.run(None, {"imagen": (x[None].astype(np.float32) / 255)})
+    prob, por_modelo = modelo_ort.run(None, {"imagen": (x[None].astype(np.float32) / 255)})
     return float(prob[0]), por_modelo[0]
 
 
@@ -50,8 +50,8 @@ def con_pytorch(conjunto, rutas) -> tuple[float, np.ndarray]:
     return r["prob"], np.array([r["por_modelo"][n] for n in conjunto.nombres])
 
 
-def comprobar(sesion, conjunto, rutas, umbral):
-    prob_o, por_o = con_onnx(sesion, leer_corte(rutas))
+def comprobar(modelo_ort, conjunto, rutas, umbral):
+    prob_o, por_o = con_onnx(modelo_ort, leer_corte(rutas))
     prob_t, por_t = con_pytorch(conjunto, rutas)
     assert abs(prob_o - prob_t) < TOLERANCIA
     assert np.abs(por_o - por_t).max() < TOLERANCIA
@@ -81,10 +81,10 @@ def test_las_metricas_del_json_son_las_de_results(meta):
     assert meta["metricas"] == inferencia.metricas_internas()
 
 
-def test_entrada_y_salidas_del_onnx(sesion):
-    entrada, = sesion.get_inputs()
+def test_entrada_y_salidas_del_onnx(modelo_ort):
+    entrada, = modelo_ort.get_inputs()
     assert (entrada.name, entrada.shape, entrada.type) == ("imagen", [1, 3, 256, 256], "tensor(float)")
-    assert [(s.name, s.shape) for s in sesion.get_outputs()] == [("prob", [1]), ("por_modelo", [1, 5])]
+    assert [(s.name, s.shape) for s in modelo_ort.get_outputs()] == [("prob", [1]), ("por_modelo", [1, 5])]
 
 
 def test_los_ejemplos_de_la_web_estan_y_llevan_licencia(meta):
@@ -99,11 +99,11 @@ def test_los_ejemplos_de_la_web_estan_y_llevan_licencia(meta):
 # Paridad ONNX frente a PyTorch
 # --------------------------------------------------------------------------- #
 
-def test_paridad_en_los_ejemplos(sesion, conjunto, meta):
+def test_paridad_en_los_ejemplos(modelo_ort, conjunto, meta):
     for ej in meta["ejemplos"]:
         rutas = [WEB / ej["ficheros"][f] for f in FASES]
-        comprobar(sesion, conjunto, rutas, meta["umbral"])
-        prob, por_modelo = con_onnx(sesion, leer_corte(rutas))
+        comprobar(modelo_ort, conjunto, rutas, meta["umbral"])
+        prob, por_modelo = con_onnx(modelo_ort, leer_corte(rutas))
         # y con la referencia guardada en el JSON (la que usa la autocomprobacion del navegador)
         assert abs(prob - ej["referencia"]["prob"]) < TOLERANCIA
         assert np.abs(por_modelo - np.array(ej["referencia"]["por_modelo"])).max() < TOLERANCIA
@@ -111,7 +111,7 @@ def test_paridad_en_los_ejemplos(sesion, conjunto, meta):
 
 
 @pytest.mark.skipif(config.RAIZ is None, reason="sin el dataset (CI)")
-def test_paridad_en_cortes_de_train_de_las_3_cohortes(sesion, conjunto, meta):
+def test_paridad_en_cortes_de_train_de_las_3_cohortes(modelo_ort, conjunto, meta):
     from src.data.carga import COHORTES, rutas_corte
     uc = config.utils()
     samples = uc.cargar_samples()
@@ -123,7 +123,7 @@ def test_paridad_en_cortes_de_train_de_las_3_cohortes(sesion, conjunto, meta):
         elegidos.append(de_la_cohorte.sample(17, random_state=7))
     assert sum(len(e) for e in elegidos) == 51
     for fila in itertools.chain.from_iterable(e.itertuples() for e in elegidos):
-        comprobar(sesion, conjunto, rutas_corte(fila, config.RAIZ), meta["umbral"])
+        comprobar(modelo_ort, conjunto, rutas_corte(fila, config.RAIZ), meta["umbral"])
 
 
 def test_exportar_de_nuevo_da_un_onnx_equivalente(conjunto, tmp_path):
