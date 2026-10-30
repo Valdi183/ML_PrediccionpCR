@@ -1,0 +1,57 @@
+# --- Datos -----------------------------------------------------------------
+# 1,27 GB en 38.109 ficheros: nunca se versionan, se vuelven a descargar
+# con `python -m src.data.descargar`. data/ existe solo como sitio posible.
+data/*
+!data/.gitkeep
+breastdcedl/
+bdcedl/
+datos/
+
+# Ruta del dataset: es propia de cada maquina
+.bdcedl_ruta
+
+# --- Entorno ---------------------------------------------------------------
+.venv/
+venv/
+env/
+.conda/
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.pytest_cache/
+.ruff_cache/
+# Secretos (no hay ninguno en este proyecto, pero por si acaso)
+.env
+
+# --- Pesos -----------------------------------------------------------------
+# Ningun peso se sube por defecto salvo los 5 del modelo final (los que evaluo test,
+# results/test/plan.json). Cualquier otro se anade a proposito: git add -f models/<nombre>.pt
+# (GitHub rechaza ficheros de mas de 100 MB; los de esta red pesan ~1,2 MB)
+*.pt
+*.pth
+*.ckpt
+*.onnx
+!models/it6_3bloques_f0.pt
+!models/it6_3bloques_f1.pt
+!models/it8_3bloques_f2.pt
+!models/it8_3bloques_f3.pt
+!models/it8_3bloques_f4.pt
+# ...salvo el de la web estatica, que es lo que sirve GitHub Pages
+!web/modelo/*.onnx
+
+# --- Entrenamiento ---------------------------------------------------------
+runs/
+logs/
+checkpoints/
+*.log
+nohup.out
+# Las pruebas de `--rapido` no valen como resultado
+results/rapido_*/
+
+# --- Editor y sistema ------------------------------------------------------
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
